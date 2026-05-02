@@ -2,12 +2,37 @@ import streamlit as st
 import pdfplumber
 from transformers import BartForConditionalGeneration, BartTokenizer
 
-# Page config
-st.set_page_config(
-    page_title="Legal AI Summarizer",
-    page_icon="⚖️",
-    layout="wide"
-)
+import streamlit as st
+import pdfplumber
+
+st.set_page_config(page_title="Legal Summarizer")
+
+st.title("📄 Legal Document Summarizer")
+
+st.markdown("### Option 1: Upload PDF")
+uploaded_file = st.file_uploader("Upload your PDF", type=["pdf"])
+
+st.markdown("---")
+
+st.markdown("### Option 2: Paste text (for mobile users)")
+manual_text = st.text_area("Paste your document text here")
+
+text = ""
+
+# 📂 If file uploaded
+if uploaded_file is not None:
+    with pdfplumber.open(uploaded_file) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text() or ""
+
+# ✍️ If text pasted
+elif manual_text:
+    text = manual_text
+
+# ✅ Show result
+if text:
+    st.success("Content loaded ✅")
+    st.text_area("Output", text, height=300)
 
 # Custom CSS (🔥 modern UI)
 st.markdown("""
